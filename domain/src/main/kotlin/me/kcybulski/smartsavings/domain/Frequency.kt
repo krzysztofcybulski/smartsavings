@@ -10,7 +10,11 @@ interface Frequency {
 
 object EveryDay : Frequency {
 
-    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> = TODO()
+    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
+        if (since.isBefore(to))
+            listOf(since) + buyingDaysBetween(since.plusDays(1), to)
+        else
+            listOf(to)
 
 }
 

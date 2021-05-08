@@ -15,7 +15,7 @@ class TestData {
 
     static Currency USD = new Currency('USD')
 
-    static Money USD_1 = new Money(1.00, USD)
-    static Money USD_10 = new Money(10.00, USD)
+    static Money USD_1 = Money.@Companion.of(1.00, USD)
+    static Money USD_10 = Money.@Companion.of(10.00, USD)
 
 }
