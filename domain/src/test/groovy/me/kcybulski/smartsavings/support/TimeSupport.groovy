@@ -13,8 +13,9 @@ trait TimeSupport {
     LocalDate today = randomDay()
 
     LocalDate yesterday = today.minusDays(1)
+    LocalDate threeDaysAgo = today.minusDays(3)
 
-    def before() {
+    def setup() {
         clock.setTime(today)
     }
 

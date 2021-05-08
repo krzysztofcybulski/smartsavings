@@ -16,7 +16,7 @@ class Investment(
         .map { DailyInvestment(it, assets) }
 
     fun totalInvestment(to: LocalDate): Money =
-        assets.map { it.money }.reduce { acc, asset -> acc + asset } * Period.between(started, to).days.toBigDecimal()
+        assets.map { it.money }.reduce { acc, asset -> acc + asset } * (Period.between(started, to).days + 1)
 
 }
 
@@ -39,7 +39,7 @@ data class Wallet(val entries: Map<Cryptocurrency, BigDecimal>) {
 
 data class Cryptocurrency internal constructor(val symbol: String)
 
-data class Money private constructor(val value: BigDecimal, val currency: Currency) {
+data class Money internal constructor(val value: BigDecimal, val currency: Currency) {
 
     operator fun plus(another: Money): Money {
         require(currency == another.currency)
@@ -51,9 +51,9 @@ data class Money private constructor(val value: BigDecimal, val currency: Curren
         return value / another.value
     }
 
-    operator fun times(multiplayer: BigDecimal): Money {
-        return of(value.multiply(multiplayer), currency)
-    }
+    operator fun times(multiplayer: BigDecimal): Money = of(value.multiply(multiplayer), currency)
+
+    operator fun times(multiplayer: Int): Money = times(multiplayer.toBigDecimal())
 
     companion object {
 

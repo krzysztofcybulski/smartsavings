@@ -11,9 +11,13 @@ class EarningsAssertions {
         return new EarningsAssertions(earnings: earnings)
     }
 
+    EarningsAssertions invested(Money money) {
+        assert earnings.investment == money
+        return this
+    }
+
     EarningsAssertions isWorth(Money money) {
         assert earnings.worth == money
         return this
     }
-
 }

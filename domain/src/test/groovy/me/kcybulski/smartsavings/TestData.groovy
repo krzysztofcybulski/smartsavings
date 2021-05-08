@@ -13,9 +13,11 @@ class TestData {
         return ofEpochDay(20000)
     }
 
-    static Currency USD = new Currency('USD')
+    static Money usd(BigDecimal value) {
+        return Money.@Companion.of(value, new Currency('USD'))
+    }
 
-    static Money USD_1 = Money.@Companion.of(1.00, USD)
-    static Money USD_10 = Money.@Companion.of(10.00, USD)
+    static Money USD_1 = usd(1.00)
+    static Money USD_10 = usd(10.00)
 
 }
