@@ -20,12 +20,20 @@ object EveryDay : Frequency {
 
 object EveryWeek : Frequency {
 
-    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> = TODO()
+    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
+        if (since.isBefore(to))
+            listOf(since) + buyingDaysBetween(since.plusWeeks(1), to)
+        else
+            listOf(to)
 
 }
 
 object EveryMonth : Frequency {
 
-    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> = TODO()
+    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
+        if (since.isBefore(to))
+            listOf(since) + buyingDaysBetween(since.plusMonths(1), to)
+        else
+            listOf(to)
 
 }
