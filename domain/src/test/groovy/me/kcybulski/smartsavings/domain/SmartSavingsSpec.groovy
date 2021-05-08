@@ -7,6 +7,8 @@ import spock.lang.Subject
 
 import static me.kcybulski.smartsavings.TestData.USD_1
 import static me.kcybulski.smartsavings.TestData.USD_10
+import static me.kcybulski.smartsavings.TestData.USD_10
+import static me.kcybulski.smartsavings.TestData.USD_5
 import static me.kcybulski.smartsavings.TestData.usd
 import static me.kcybulski.smartsavings.assertions.EarningsAssertions.assertThat
 
@@ -35,7 +37,7 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
                     .isWorth(usd(10.0))
     }
 
-    def 'should calculate three days earnings from one crypt'() {
+    def 'should calculate three days earnings from one crypto'() {
         given:
             cryptoPrices.setPrice('BTC', threeDaysAgo, USD_1)
             cryptoPrices.setPrice('BTC', yesterday, USD_10)
@@ -51,6 +53,29 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
             assertThat(earnings)
                     .invested(usd(40.00))
                     .isWorth(usd(220.00))
+    }
+
+    def 'should calculate three days earnings from two cryptos'() {
+        given:
+            cryptoPrices.setPrice('BTC', threeDaysAgo, USD_1)
+            cryptoPrices.setPrice('BTC', yesterday, USD_10)
+            cryptoPrices.setPrice('ETH', threeDaysAgo, USD_5)
+            cryptoPrices.setPrice('ETH', yesterday, USD_10)
+        and:
+            Investment investment = new Investment(
+                    threeDaysAgo,
+                    EveryDay.INSTANCE,
+                    [
+                            new Asset(cryptocurrencies.bitcoin(), USD_5),
+                            new Asset(cryptocurrencies.ethereum(), USD_5)
+                    ]
+            )
+        when:
+            Earnings earnings = smartSavings.howMuchWorthNow(investment)
+        then:
+            assertThat(earnings)
+                    .invested(usd(40.00))
+                    .isWorth(usd(140.00))
     }
 
 }

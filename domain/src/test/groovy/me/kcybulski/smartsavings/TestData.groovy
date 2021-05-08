@@ -18,6 +18,7 @@ class TestData {
     }
 
     static Money USD_1 = usd(1.00)
+    static Money USD_5 = usd(5.00)
     static Money USD_10 = usd(10.00)
 
 }

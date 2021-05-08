@@ -67,5 +67,6 @@ data class Currency(val iso: String)
 class CryptocurrenciesFactory {
 
     fun bitcoin(): Cryptocurrency = Cryptocurrency("BTC")
+    fun ethereum(): Cryptocurrency = Cryptocurrency("ETH")
 
 }
