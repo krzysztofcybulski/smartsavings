@@ -1,28 +1,29 @@
 package me.kcybulski.smartsavings.domain
 
-
+import me.kcybulski.smartsavings.support.TimeSupport
 import spock.lang.Specification
 import spock.lang.Subject
 
-import java.time.LocalDate
+import static me.kcybulski.smartsavings.TestData.USD_10
 
-import static me.kcybulski.smartsavings.TestData.randomDay
+class SmartSavingsSpec extends Specification implements TimeSupport {
 
-class SmartSavingsSpec extends Specification {
+    CryptocurrenciesFactory cryptocurrencies = new CryptocurrenciesFactory()
 
     @Subject
-    SmartSavings smartSavings = new SmartSavings()
+    SmartSavings smartSavings = new SmartSavings(clock)
 
     def 'should calculate one day earnings'() {
         given:
-            LocalDate today = randomDay()
             Investment investment = new Investment(
-                    today.minusDays(1),
-                    new Money(10.0, new Currency('PLN')),
-                    EveryDay.INSTANCE
+                    today,
+                    EveryDay.INSTANCE,
+                    [new Asset(cryptocurrencies.bitcoin(), USD_10)]
             )
-        expect:
-            smartSavings.howMuchWorthNow(investment).worth == new Money(10.0, new Currency('PLN'))
+        when:
+            Earnings earnings = smartSavings.howMuchWorthNow(investment)
+        then:
+            earnings.worth == USD_10
     }
 
 }

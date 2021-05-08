@@ -1,6 +1,10 @@
 package me.kcybulski.smartsavings.domain
 
-class SmartSavings {
+import java.time.Clock
+
+class SmartSavings(
+    private val clock: Clock
+) {
 
     fun howMuchWorthNow(investment: Investment): Earnings = TODO()
 
