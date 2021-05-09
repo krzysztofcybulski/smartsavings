@@ -11,8 +11,6 @@ import static me.kcybulski.smartsavings.assertions.EarningsAssertions.assertThat
 class SmartSavingsSpec extends Specification implements TimeSupport {
 
     TestCryptoPrices cryptoPrices = new TestCryptoPrices()
-
-    CryptocurrenciesFactory cryptocurrencies = new CryptocurrenciesFactory()
     WalletCalculator walletCalculator = new WalletCalculator(cryptoPrices)
 
     @Subject
@@ -20,60 +18,63 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
 
     def 'should calculate one day earnings from one crypto'() {
         given:
-            cryptoPrices.setPrice('BTC', yesterday, USD_10)
+            cryptoPrices.setPrice(yesterday, bitcoinWorth(10.00))
         and:
             Investment investment = new Investment(
+                    TETHER,
+                    [new Asset(BITCOIN, 10.00)],
                     today,
-                    EveryDay.INSTANCE,
-                    [new Asset(cryptocurrencies.bitcoin(), USD_10)]
+                    EveryDay.INSTANCE
             )
         when:
-            Earnings earnings = smartSavings.howMuchWorthNow(investment).get()
+            Earnings earnings = smartSavings.howMuchWorthNow(investment).block()
         then:
             assertThat(earnings)
-                    .invested(usd(10.0))
-                    .isWorth(usd(10.0))
+                    .invested(10.00)
+                    .isWorth(10.00)
     }
-
+//
     def 'should calculate three days earnings from one crypto'() {
         given:
-            cryptoPrices.setPrice('BTC', threeDaysAgo, USD_1)
-            cryptoPrices.setPrice('BTC', yesterday, USD_10)
+            cryptoPrices.setPrice(threeDaysAgo, bitcoinWorth(1.00))
+            cryptoPrices.setPrice(yesterday, bitcoinWorth(10.00))
         and:
             Investment investment = new Investment(
+                    TETHER,
+                    [new Asset(BITCOIN, 10.00)],
                     threeDaysAgo,
-                    EveryDay.INSTANCE,
-                    [new Asset(cryptocurrencies.bitcoin(), USD_10)]
+                    EveryDay.INSTANCE
             )
         when:
-            Earnings earnings = smartSavings.howMuchWorthNow(investment).get()
+            Earnings earnings = smartSavings.howMuchWorthNow(investment).block()
         then:
             assertThat(earnings)
-                    .invested(usd(40.00))
-                    .isWorth(usd(220.00))
+                    .invested(40.00)
+                    .isWorth(220.00)
     }
-
+//
     def 'should calculate three days earnings from two cryptos'() {
         given:
-            cryptoPrices.setPrice('BTC', threeDaysAgo, USD_1)
-            cryptoPrices.setPrice('BTC', yesterday, USD_10)
-            cryptoPrices.setPrice('ETH', threeDaysAgo, USD_5)
-            cryptoPrices.setPrice('ETH', yesterday, USD_10)
+            cryptoPrices.setPrice(threeDaysAgo, bitcoinWorth(1.00))
+            cryptoPrices.setPrice(yesterday, bitcoinWorth(10.00))
+            cryptoPrices.setPrice(threeDaysAgo, ethereumWorth(5.00))
+            cryptoPrices.setPrice(yesterday, ethereumWorth(10.00))
         and:
             Investment investment = new Investment(
-                    threeDaysAgo,
-                    EveryDay.INSTANCE,
+                    TETHER,
                     [
-                            new Asset(cryptocurrencies.bitcoin(), USD_5),
-                            new Asset(cryptocurrencies.ethereum(), USD_5)
-                    ]
+                            new Asset(BITCOIN, 5.00),
+                            new Asset(ETHEREUM, 5.00)
+                    ],
+                    threeDaysAgo,
+                    EveryDay.INSTANCE
             )
         when:
-            Earnings earnings = smartSavings.howMuchWorthNow(investment).get()
+            Earnings earnings = smartSavings.howMuchWorthNow(investment).block()
         then:
             assertThat(earnings)
-                    .invested(usd(40.00))
-                    .isWorth(usd(140.00))
+                    .invested(40.00)
+                    .isWorth(140.00)
     }
 
 }

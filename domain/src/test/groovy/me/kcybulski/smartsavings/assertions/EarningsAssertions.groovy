@@ -1,7 +1,7 @@
 package me.kcybulski.smartsavings.assertions
 
 import me.kcybulski.smartsavings.domain.Earnings
-import me.kcybulski.smartsavings.domain.Money
+import me.kcybulski.smartsavings.domain.Exchange
 
 class EarningsAssertions {
 
@@ -11,12 +11,12 @@ class EarningsAssertions {
         return new EarningsAssertions(earnings: earnings)
     }
 
-    EarningsAssertions invested(Money money) {
+    EarningsAssertions invested(BigDecimal money) {
         assert earnings.investment == money
         return this
     }
 
-    EarningsAssertions isWorth(Money money) {
+    EarningsAssertions isWorth(BigDecimal money) {
         assert earnings.worth == money
         return this
     }

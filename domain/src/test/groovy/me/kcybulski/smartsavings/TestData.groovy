@@ -1,7 +1,8 @@
 package me.kcybulski.smartsavings
 
-import me.kcybulski.smartsavings.domain.Currency
-import me.kcybulski.smartsavings.domain.Money
+import me.kcybulski.smartsavings.domain.Coin
+import me.kcybulski.smartsavings.domain.Cryptocurrencies
+import me.kcybulski.smartsavings.domain.Exchange
 
 import java.time.LocalDate
 
@@ -13,12 +14,16 @@ class TestData {
         return ofEpochDay(20000)
     }
 
-    static Money usd(BigDecimal value) {
-        return Money.@Companion.of(value, new Currency('USD'))
+    static Coin TETHER = Cryptocurrencies.@Companion.TETHER
+    static Coin BITCOIN = Cryptocurrencies.@Companion.BITCOIN
+    static Coin ETHEREUM = Cryptocurrencies.@Companion.ETHEREUM
+
+    static Exchange bitcoinWorth(BigDecimal price) {
+        return new Exchange(BITCOIN, TETHER, price)
     }
 
-    static Money USD_1 = usd(1.00)
-    static Money USD_5 = usd(5.00)
-    static Money USD_10 = usd(10.00)
+    static Exchange ethereumWorth(BigDecimal price) {
+        return new Exchange(ETHEREUM, TETHER, price)
+    }
 
 }

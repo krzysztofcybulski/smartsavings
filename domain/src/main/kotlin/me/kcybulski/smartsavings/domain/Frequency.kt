@@ -5,10 +5,7 @@ import java.time.LocalDate
 interface Frequency {
 
     fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
-        if (since.isBefore(to))
-            listOf(since) + buyingDaysBetween(nextDay(since), to)
-        else
-            listOf(to)
+        if (since.isBefore(to)) listOf(since) + buyingDaysBetween(nextDay(since), to) else listOf(to)
 
     fun nextDay(previous: LocalDate): LocalDate
 

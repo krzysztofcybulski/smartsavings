@@ -1,26 +1,29 @@
 package me.kcybulski.smartsavings.support
 
 import kotlin.Pair
-import me.kcybulski.smartsavings.domain.CryptoPricesPort
-import me.kcybulski.smartsavings.domain.Cryptocurrency
-import me.kcybulski.smartsavings.domain.Money
+import me.kcybulski.smartsavings.domain.Coin
+import me.kcybulski.smartsavings.domain.Exchange
+import me.kcybulski.smartsavings.domain.ports.CryptoPricesPort
+import reactor.core.publisher.Flux
 
 import java.time.LocalDate
-import java.util.concurrent.CompletableFuture
-
-import static java.util.concurrent.CompletableFuture.completedFuture
 
 class TestCryptoPrices implements CryptoPricesPort {
 
-    Map<String, List<Pair<LocalDate, Money>>> prices = [:]
+    Map<Coin, List<Pair<LocalDate, Exchange>>> prices = [:]
 
-    void setPrice(String crypto, LocalDate day, Money price) {
-        prices.merge(crypto, [new Pair<LocalDate, Money>(day, price)]) { a, b -> a + b }
+    void setPrice(LocalDate day, Exchange exchange) {
+        prices.merge(exchange.base, [new Pair<LocalDate, Exchange>(day, exchange)]) { a, b -> a + b }
     }
 
-    CompletableFuture<Money> getUSDTPriceAt(Cryptocurrency crypto, LocalDate day) {
-        List<Pair<LocalDate, Money>> history = prices[crypto.symbol].sort { it.first }
-        return completedFuture(history[history.findLastIndexOf { it.first.isBefore(day) }].second)
+    Flux<Pair<LocalDate, BigDecimal>> getExchange(Coin base, Coin quote, List<LocalDate> days) {
+        return Flux.fromIterable(days)
+                .map { day -> new Pair(day, getSingleExchange(base, quote, day).price) }
     }
 
+    private Exchange getSingleExchange(Coin crypto, Coin quote, LocalDate day) {
+        List<Pair<LocalDate, Exchange>> history = prices[crypto].sort { it.first }
+        def index = history.findLastIndexOf { it.second.quote == quote && it.first.isBefore(day) }
+        return history[index].second
+    }
 }
