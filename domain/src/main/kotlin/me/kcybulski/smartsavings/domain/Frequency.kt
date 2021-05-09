@@ -6,7 +6,7 @@ interface Frequency {
 
     fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
         if (since.isBefore(to))
-            listOf(since) + EveryDay.buyingDaysBetween(nextDay(since), to)
+            listOf(since) + buyingDaysBetween(nextDay(since), to)
         else
             listOf(to)
 
