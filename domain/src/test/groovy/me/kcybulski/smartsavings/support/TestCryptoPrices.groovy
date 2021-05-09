@@ -6,6 +6,9 @@ import me.kcybulski.smartsavings.domain.Cryptocurrency
 import me.kcybulski.smartsavings.domain.Money
 
 import java.time.LocalDate
+import java.util.concurrent.CompletableFuture
+
+import static java.util.concurrent.CompletableFuture.completedFuture
 
 class TestCryptoPrices implements CryptoPricesPort {
 
@@ -15,9 +18,9 @@ class TestCryptoPrices implements CryptoPricesPort {
         prices.merge(crypto, [new Pair<LocalDate, Money>(day, price)]) { a, b -> a + b }
     }
 
-    Money getPriceAt(Cryptocurrency crypto, LocalDate day) {
+    CompletableFuture<Money> getUSDTPriceAt(Cryptocurrency crypto, LocalDate day) {
         List<Pair<LocalDate, Money>> history = prices[crypto.symbol].sort { it.first }
-        return history[history.findLastIndexOf { it.first.isBefore(day) }].second
+        return completedFuture(history[history.findLastIndexOf { it.first.isBefore(day) }].second)
     }
 
 }

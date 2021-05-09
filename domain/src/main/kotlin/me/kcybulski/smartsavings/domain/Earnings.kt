@@ -1,8 +1,6 @@
 package me.kcybulski.smartsavings.domain
 
-class Earnings(
+data class Earnings(
     val investment: Money,
     val worth: Money
-) {
-
-}
+)

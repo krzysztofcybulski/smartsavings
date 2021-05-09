@@ -4,36 +4,30 @@ import java.time.LocalDate
 
 interface Frequency {
 
-    fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate>
+    fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
+        if (since.isBefore(to))
+            listOf(since) + EveryDay.buyingDaysBetween(nextDay(since), to)
+        else
+            listOf(to)
+
+    fun nextDay(previous: LocalDate): LocalDate
 
 }
 
 object EveryDay : Frequency {
 
-    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
-        if (since.isBefore(to))
-            listOf(since) + buyingDaysBetween(since.plusDays(1), to)
-        else
-            listOf(to)
+    override fun nextDay(previous: LocalDate): LocalDate = previous.plusDays(1)
 
 }
 
 object EveryWeek : Frequency {
 
-    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
-        if (since.isBefore(to))
-            listOf(since) + buyingDaysBetween(since.plusWeeks(1), to)
-        else
-            listOf(to)
+    override fun nextDay(previous: LocalDate): LocalDate = previous.plusWeeks(1)
 
 }
 
 object EveryMonth : Frequency {
 
-    override fun buyingDaysBetween(since: LocalDate, to: LocalDate): List<LocalDate> =
-        if (since.isBefore(to))
-            listOf(since) + buyingDaysBetween(since.plusMonths(1), to)
-        else
-            listOf(to)
+    override fun nextDay(previous: LocalDate): LocalDate = previous.plusMonths(1)
 
 }

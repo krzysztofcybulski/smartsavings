@@ -1,40 +1,28 @@
 package me.kcybulski.smartsavings.domain
 
-import java.math.BigDecimal
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId.systemDefault
+import java.util.concurrent.CompletableFuture
 
 class SmartSavings(
     private val clock: Clock,
-    private val cryptoPrices: CryptoPricesPort
+    private val walletCalculator: WalletCalculator
 ) {
 
-    fun howMuchWorthNow(investment: Investment): Earnings {
-        val today = LocalDate.ofInstant(clock.instant(), systemDefault())
-        val wallet = investment
-            .getDailyInvestments(today)
-            .map { dailyCryptoWallet(it) }
-            .reduce { acc, wallet -> acc + wallet }
-
-        return Earnings(
-            investment = investment.totalInvestment(today),
-            worth = walletWorth(wallet, today)
-        )
+    fun howMuchWorthNow(investment: Investment): CompletableFuture<Earnings> {
+        val today = today()
+        return walletCalculator
+            .fromInvestment(investment, today)
+            .thenCompose { walletCalculator.walletWorth(it, today) }
+            .thenApply {
+                Earnings(
+                    investment = investment.totalInvestment(today),
+                    worth = it
+                )
+            }
     }
 
-    private fun dailyCryptoWallet(dailyInvestment: DailyInvestment): Wallet = Wallet(
-        dailyInvestment.assets.associate { howMuchCrypto(it, dailyInvestment.day) }
-    )
-
-    private fun howMuchCrypto(asset: Asset, day: LocalDate): Pair<Cryptocurrency, BigDecimal> {
-        val amount = asset.money / cryptoPrices.getPriceAt(asset.crypto, day)
-        return asset.crypto to amount
-    }
-
-    private fun walletWorth(wallet: Wallet, day: LocalDate): Money = wallet.entries
-            .mapValues { (key, value) -> cryptoPrices.getPriceAt(key, day) * value }
-            .values
-            .reduce { a, b -> a + b }
+    private fun today() = LocalDate.ofInstant(clock.instant(), systemDefault())
 
 }

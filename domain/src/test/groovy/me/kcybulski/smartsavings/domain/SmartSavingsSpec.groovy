@@ -5,20 +5,18 @@ import me.kcybulski.smartsavings.support.TimeSupport
 import spock.lang.Specification
 import spock.lang.Subject
 
-import static me.kcybulski.smartsavings.TestData.USD_1
-import static me.kcybulski.smartsavings.TestData.USD_10
-import static me.kcybulski.smartsavings.TestData.USD_10
-import static me.kcybulski.smartsavings.TestData.USD_5
-import static me.kcybulski.smartsavings.TestData.usd
+import static me.kcybulski.smartsavings.TestData.*
 import static me.kcybulski.smartsavings.assertions.EarningsAssertions.assertThat
 
 class SmartSavingsSpec extends Specification implements TimeSupport {
 
-    CryptocurrenciesFactory cryptocurrencies = new CryptocurrenciesFactory()
     TestCryptoPrices cryptoPrices = new TestCryptoPrices()
 
+    CryptocurrenciesFactory cryptocurrencies = new CryptocurrenciesFactory()
+    WalletCalculator walletCalculator = new WalletCalculator(cryptoPrices)
+
     @Subject
-    SmartSavings smartSavings = new SmartSavings(clock, cryptoPrices)
+    SmartSavings smartSavings = new SmartSavings(clock, walletCalculator)
 
     def 'should calculate one day earnings from one crypto'() {
         given:
@@ -30,7 +28,7 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
                     [new Asset(cryptocurrencies.bitcoin(), USD_10)]
             )
         when:
-            Earnings earnings = smartSavings.howMuchWorthNow(investment)
+            Earnings earnings = smartSavings.howMuchWorthNow(investment).get()
         then:
             assertThat(earnings)
                     .invested(usd(10.0))
@@ -48,7 +46,7 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
                     [new Asset(cryptocurrencies.bitcoin(), USD_10)]
             )
         when:
-            Earnings earnings = smartSavings.howMuchWorthNow(investment)
+            Earnings earnings = smartSavings.howMuchWorthNow(investment).get()
         then:
             assertThat(earnings)
                     .invested(usd(40.00))
@@ -71,7 +69,7 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
                     ]
             )
         when:
-            Earnings earnings = smartSavings.howMuchWorthNow(investment)
+            Earnings earnings = smartSavings.howMuchWorthNow(investment).get()
         then:
             assertThat(earnings)
                     .invested(usd(40.00))

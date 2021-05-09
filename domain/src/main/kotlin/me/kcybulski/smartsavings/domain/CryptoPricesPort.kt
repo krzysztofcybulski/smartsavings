@@ -1,9 +1,10 @@
 package me.kcybulski.smartsavings.domain
 
 import java.time.LocalDate
+import java.util.concurrent.CompletableFuture
 
 interface CryptoPricesPort {
 
-    fun getPriceAt(crypto: Cryptocurrency, day: LocalDate): Money
+    fun getUSDTPriceAt(crypto: Cryptocurrency, day: LocalDate): CompletableFuture<Money>
 
 }
