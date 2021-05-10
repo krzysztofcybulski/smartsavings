@@ -1,6 +1,19 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("io.ratpack:ratpack-gradle:1.9.0-rc-2")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.5.0"
     groovy
+}
+
+apply {
+    plugin("io.ratpack.ratpack-java")
 }
 
 group = "me.kcybulski"
@@ -15,7 +28,6 @@ dependencies {
     implementation(project(":coinpaprika"))
     implementation(kotlin("stdlib"))
 
-    implementation("io.ratpack:ratpack-core:1.9.0-rc-2")
     implementation("io.ratpack:ratpack-reactor:1.9.0-rc-2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.+")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.+")
@@ -29,4 +41,8 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.register("stage") {
+    dependsOn("clean", "installDist")
 }
