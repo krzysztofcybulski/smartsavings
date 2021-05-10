@@ -1,10 +1,13 @@
 package me.kcybulski.smartsavings.domain
 
+import me.kcybulski.smartsavings.domain.Wallet.Companion.emptyWallet
+import me.kcybulski.smartsavings.domain.Wallet.Companion.singleAssetWallet
 import me.kcybulski.smartsavings.domain.ports.CryptoPricesPort
 import reactor.core.publisher.Flux.fromIterable
 import reactor.core.publisher.Mono
 import java.math.BigDecimal
 import java.math.BigDecimal.ZERO
+import java.math.RoundingMode.CEILING
 import java.time.LocalDate
 
 class WalletCalculator(
@@ -17,11 +20,11 @@ class WalletCalculator(
             .flatMap { asset ->
                 cryptoPrices
                     .getExchange(asset.crypto, investment.coin, days)
-                    .map { asset.investment / it.second }
+                    .map { asset.investment.divide(it.second, it.second.scale(), CEILING) }
                     .reduce(ZERO) { a, b -> a + b }
-                    .map { Wallet.singleAssetWallet(asset.crypto, it) }
+                    .map { singleAssetWallet(asset.crypto, it) }
             }
-            .reduce(Wallet.emptyWallet()) { a, b -> a + b }
+            .reduce(emptyWallet()) { a, b -> a + b }
     }
 
     fun walletWorth(wallet: Wallet, quote: Coin, day: LocalDate): Mono<BigDecimal> {

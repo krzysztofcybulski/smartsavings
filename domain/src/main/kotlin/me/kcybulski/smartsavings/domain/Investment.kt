@@ -16,10 +16,10 @@ class Investment(
         .buyingDaysBetween(started, to)
         .map { DailyInvestment(it, assets) }
 
-    fun getDays(until: LocalDate): List<LocalDate> = frequency.buyingDaysBetween(started, until)
+    fun totalInvestment(until: LocalDate): BigDecimal =
+        assets.map { it.investment }.fold(ZERO) { a, b -> a + b } * getDays(until).size.toBigDecimal()
 
-    fun totalInvestment(to: LocalDate): BigDecimal =
-        assets.map { it.investment }.fold(ZERO) { a, b -> a + b } * (Period.between(started, to).days + 1).toBigDecimal()
+    fun getDays(until: LocalDate): List<LocalDate> = frequency.buyingDaysBetween(started, until)
 
 }
 

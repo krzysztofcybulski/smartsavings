@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.projectreactor:reactor-core:3.4.5")
+    api("io.projectreactor:reactor-core:3.4.5")
 
     testImplementation("org.codehaus.groovy:groovy-all:3.0.7")
     testImplementation("org.spockframework:spock-core:2.0-M5-groovy-3.0")

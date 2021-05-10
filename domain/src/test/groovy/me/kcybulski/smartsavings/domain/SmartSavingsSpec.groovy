@@ -33,7 +33,7 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
                     .invested(10.00)
                     .isWorth(10.00)
     }
-//
+
     def 'should calculate three days earnings from one crypto'() {
         given:
             cryptoPrices.setPrice(threeDaysAgo, bitcoinWorth(1.00))
@@ -52,7 +52,7 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
                     .invested(40.00)
                     .isWorth(220.00)
     }
-//
+
     def 'should calculate three days earnings from two cryptos'() {
         given:
             cryptoPrices.setPrice(threeDaysAgo, bitcoinWorth(1.00))
@@ -76,5 +76,4 @@ class SmartSavingsSpec extends Specification implements TimeSupport {
                     .invested(40.00)
                     .isWorth(140.00)
     }
-
 }
