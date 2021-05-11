@@ -1,7 +1,4 @@
 buildscript {
-    repositories {
-        mavenCentral()
-    }
     dependencies {
         classpath("io.ratpack:ratpack-gradle:1.9.0-rc-2")
     }
@@ -10,10 +7,15 @@ buildscript {
 plugins {
     kotlin("jvm") version "1.5.0"
     groovy
+    application
 }
 
 apply {
     plugin("io.ratpack.ratpack-java")
+}
+
+application {
+    mainClass.set("me.kcybulski.smartsavings.api.StartKt")
 }
 
 group = "me.kcybulski"
