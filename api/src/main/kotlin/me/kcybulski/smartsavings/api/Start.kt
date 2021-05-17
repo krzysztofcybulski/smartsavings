@@ -17,6 +17,9 @@ import me.kcybulski.smartsavings.domain.Investment
 import me.kcybulski.smartsavings.domain.SmartSavings
 import me.kcybulski.smartsavings.domain.WalletCalculator
 import me.kcybulski.smartsavings.domain.adapters.InMemoryCacheCryptoPricesAdapter
+import me.kcybulski.smartsavings.redis.RedisCacheCryptoPrices
+import org.redisson.Redisson
+import org.redisson.config.Config
 import ratpack.reactor.ReactorRatpack
 import ratpack.server.RatpackServer
 import java.math.BigDecimal.ONE
@@ -31,6 +34,16 @@ val objectMapper: ObjectMapper = ObjectMapper()
     .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
 
 val cryptoPrices = CoinpaprikaCryptoPricesFactory.create()
+
+val redissonClient = Config()
+    .also {
+        it.useClusterServers()
+            .addNodeAddress(System.getenv("REDIS_TLS_URL"))
+    }
+    .let(Redisson::create)
+
+val cache = RedisCacheCryptoPrices(redissonClient, cryptoPrices)
+
 val walletCalculator = WalletCalculator(InMemoryCacheCryptoPricesAdapter(cryptoPrices))
 val smartSavings = SmartSavings(clock, walletCalculator)
 

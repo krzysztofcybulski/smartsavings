@@ -28,6 +28,7 @@ repositories {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":coinpaprika"))
+    implementation(project(":redis"))
     implementation(kotlin("stdlib"))
 
     implementation("io.ratpack:ratpack-reactor:1.9.0-rc-2")
