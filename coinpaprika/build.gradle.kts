@@ -13,7 +13,7 @@ repositories {
 dependencies {
     implementation(project(":domain"))
     implementation(kotlin("stdlib"))
-    implementation("io.projectreactor.netty:reactor-netty-http:1.0.6")
+    api("io.projectreactor.netty:reactor-netty-http:1.0.6")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.0.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.+")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.+")
