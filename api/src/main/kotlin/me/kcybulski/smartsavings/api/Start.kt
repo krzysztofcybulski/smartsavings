@@ -40,6 +40,8 @@ val redissonClient = Config()
         it.useSingleServer()
             .setAddress(System.getenv("REDIS_HOST"))
             .setPassword(System.getenv("REDIS_PASSWORD"))
+            .setConnectionMinimumIdleSize(8)
+            .setConnectionPoolSize(20)
     }
     .let(Redisson::create)
 
