@@ -38,7 +38,8 @@ val cryptoPrices = CoinpaprikaCryptoPricesFactory.create()
 val redissonClient = Config()
     .also {
         it.useSingleServer()
-            .setAddress(System.getenv("REDIS_URL"))
+            .setAddress(System.getenv("REDIS_HOST"))
+            .setPassword(System.getenv("REDIS_PASSWORD"))
     }
     .let(Redisson::create)
 
