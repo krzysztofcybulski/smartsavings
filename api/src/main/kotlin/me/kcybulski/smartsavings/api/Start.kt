@@ -38,7 +38,7 @@ val cryptoPrices = CoinpaprikaCryptoPricesFactory.create()
 val redissonClient = Config()
     .also {
         it.useClusterServers()
-            .addNodeAddress(System.getenv("REDIS_TLS_URL"))
+            .addNodeAddress(System.getenv("REDIS_URL"))
     }
     .let(Redisson::create)
 
