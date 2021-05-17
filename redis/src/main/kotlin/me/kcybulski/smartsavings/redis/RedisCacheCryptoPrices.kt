@@ -21,10 +21,10 @@ class RedisCacheCryptoPrices(
             .fromIterable(days)
             .flatMap { date -> redis.getBucket<BigDecimal>(key(base, quote, date)).get().map { date to it } }
             .doOnNext { println("Loaded from cache ${base.symbol} ${quote.symbol} ${it.first} -> ${it.second}") }
+            .cache()
 
-        val fetched = cache.filter { (day, _) -> day !in days }
-            .collectList()
-            .map { it.map { it.first } }
+        val fetched = cache.collectList()
+            .map { cached -> days - cached.map { it.first } }
             .flatMapMany { cryptoPrices.getExchange(base, quote, it) }
             .doOnNext { persist(base, quote, it.first, it.second) }
             .doOnNext { println("Savings to cache ${base.symbol} ${quote.symbol} ${it.first} -> ${it.second}") }
