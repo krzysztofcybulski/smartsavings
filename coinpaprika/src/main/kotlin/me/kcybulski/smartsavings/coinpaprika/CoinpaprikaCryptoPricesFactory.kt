@@ -10,20 +10,17 @@ import reactor.netty.http.client.HttpClient
 object CoinpaprikaCryptoPricesFactory {
 
     private val defaultHttpClient: HttpClient = HttpClient.create()
-        .headers { headers ->
-            headers.remove("Content-Length")
-        }
 
     private val defaultObjectMapper: ObjectMapper = ObjectMapper()
         .registerModule(KotlinModule())
         .registerModule(JavaTimeModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    fun create(): CryptoPricesPort = CoinpaprikaCryptoPricesAdapter(CoinpaprikaClient(defaultHttpClient, defaultObjectMapper))
-
+    @JvmOverloads
     fun create(
-        httpClient: HttpClient,
-        objectMapper: ObjectMapper
-    ): CryptoPricesPort = CoinpaprikaCryptoPricesAdapter(CoinpaprikaClient(httpClient, objectMapper))
+        httpClient: HttpClient = defaultHttpClient,
+        objectMapper: ObjectMapper = defaultObjectMapper,
+        baseUrl: String =  "https://api.coinpaprika.com/v1"
+    ): CryptoPricesPort = CoinpaprikaCryptoPricesAdapter(CoinpaprikaClient(httpClient, objectMapper, baseUrl))
 
 }

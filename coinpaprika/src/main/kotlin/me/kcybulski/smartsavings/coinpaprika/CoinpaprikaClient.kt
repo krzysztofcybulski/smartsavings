@@ -12,11 +12,12 @@ import java.time.LocalDate
 
 internal class CoinpaprikaClient(
     private val httpClient: HttpClient,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val baseUrl: String
 ) {
 
     fun getDayPrices(coin: String, year: Int): Flux<Candlestick> = httpClient
-        .baseUrl("https://api.coinpaprika.com/v1")
+        .baseUrl(baseUrl)
         .host("api.coinpaprika.com")
         .get()
         .uri("/coins/${coin}/ohlcv/historical?start=${year}-01-01&limit=366")
@@ -38,14 +39,4 @@ internal class CoinpaprikaClient(
         val date: LocalDate,
         val startingPrice: BigDecimal
     )
-}
-fun ByteBuf.toByteArraySafe(): ByteArray {
-    if (this.hasArray()) {
-        return this.array()
-    }
-
-    val bytes = ByteArray(this.readableBytes())
-    this.getBytes(this.readerIndex(), bytes)
-
-    return bytes
 }
