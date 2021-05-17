@@ -44,7 +44,7 @@ val redissonClient = Config()
 
 val cache = RedisCacheCryptoPrices(redissonClient, cryptoPrices)
 
-val walletCalculator = WalletCalculator(InMemoryCacheCryptoPricesAdapter(cryptoPrices))
+val walletCalculator = WalletCalculator(cache)
 val smartSavings = SmartSavings(clock, walletCalculator)
 
 fun main() {
