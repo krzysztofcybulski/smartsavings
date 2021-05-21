@@ -10,7 +10,7 @@ trait CoinpaprikaApiStub {
 
     static WireMockServer wireMockServer = new WireMockServer(
             options()
-                    .port(8089)
+                    .dynamicPort()
     )
 
     def setupSpec() {

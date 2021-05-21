@@ -21,7 +21,7 @@ class CoinpaprikaCryptoPricesSpec extends Specification implements CoinpaprikaAp
     CoinpaprikaClient client = new CoinpaprikaClient(
             CoinpaprikaCryptoPricesFactory.@INSTANCE.defaultHttpClient,
             CoinpaprikaCryptoPricesFactory.@INSTANCE.defaultObjectMapper,
-            'localhost:8089'
+            "localhost:${wireMockServer.port()}"
     )
 
     @Subject
