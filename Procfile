@@ -1,1 +1,1 @@
-web: api/build/install/api/bin/api
+web: build/install/api/bin/api

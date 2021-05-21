@@ -7,15 +7,10 @@ buildscript {
 plugins {
     kotlin("jvm")
     groovy
-    application
 }
 
 apply {
     plugin("io.ratpack.ratpack-java")
-}
-
-application {
-    mainClass.set("me.kcybulski.smartsavings.api.StartKt")
 }
 
 group = "me.kcybulski"

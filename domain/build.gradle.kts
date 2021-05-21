@@ -1,10 +1,15 @@
 plugins {
     kotlin("jvm")
     groovy
+    application
 }
 
 group = "me.kcybulski"
 version = "1.0-SNAPSHOT"
+
+application {
+    mainClass.set("me.kcybulski.smartsavings.StartKt")
+}
 
 repositories {
     mavenCentral()
