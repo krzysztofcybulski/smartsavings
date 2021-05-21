@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.5.0"
+    kotlin("jvm")
     groovy
     application
 }
@@ -26,10 +26,10 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":coinpaprika"))
     implementation(kotlin("stdlib"))
+    implementation(project(":domain"))
 
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.3")
     implementation("io.ratpack:ratpack-reactor:1.9.0-rc-2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.+")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.+")
