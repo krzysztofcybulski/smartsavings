@@ -5,31 +5,18 @@ import me.kcybulski.smartsavings.coinpaprika.CoinpaprikaCryptoPricesFactory
 import me.kcybulski.smartsavings.domain.SmartSavings
 import me.kcybulski.smartsavings.domain.WalletCalculator
 import me.kcybulski.smartsavings.redis.RedisCacheCryptoPrices
-import org.redisson.Redisson
-import org.redisson.api.RedissonClient
-import org.redisson.config.Config
+import me.kcybulski.smartsavings.redis.RedisConfiguration
+import java.lang.System.getenv
 import java.time.Clock
 import java.time.Clock.systemUTC
 
 fun main() {
 
     val clock: Clock = systemUTC()
+    val redisConfig = RedisConfiguration(getenv("REDIS_HOST"), getenv("REDIS_PASSWORD"))
+
     val cryptoPrices = CoinpaprikaCryptoPricesFactory.create()
-
-    val redissonClient: RedissonClient = Config()
-        .also {
-            it.useSingleServer()
-                .setAddress(System.getenv("REDIS_HOST"))
-                .setPassword(System.getenv("REDIS_PASSWORD"))
-                .setConnectionMinimumIdleSize(8)
-                .setConnectionPoolSize(20)
-        }
-        .let(Redisson::create)
-
-    redissonClient.keys.flushall()
-
-    val cache = RedisCacheCryptoPrices(redissonClient, cryptoPrices)
-
+    val cache = RedisCacheCryptoPrices(redisConfig, cryptoPrices)
     val walletCalculator = WalletCalculator(cache)
     val smartSavings = SmartSavings(clock, walletCalculator)
 

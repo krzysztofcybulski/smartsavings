@@ -1,6 +1,16 @@
+buildscript {
+    dependencies {
+        classpath("io.ratpack:ratpack-gradle:1.9.0-rc-2")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.5.0"
     groovy
+}
+
+apply {
+    plugin("io.ratpack.ratpack-java")
 }
 
 group = "me.kcybulski"

@@ -2,20 +2,29 @@ package me.kcybulski.smartsavings.redis
 
 import me.kcybulski.smartsavings.domain.Coin
 import me.kcybulski.smartsavings.domain.ports.CryptoPricesPort
-import org.redisson.api.RedissonClient
+import org.redisson.Redisson
 import org.redisson.api.RedissonReactiveClient
+import org.redisson.config.Config
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.publisher.Mono.just
 import java.math.BigDecimal
 import java.time.LocalDate
 
 class RedisCacheCryptoPrices(
-    redissonClient: RedissonClient,
+    private val redisConfiguration: RedisConfiguration,
     private val cryptoPrices: CryptoPricesPort
 ) : CryptoPricesPort {
 
-    private val redis: RedissonReactiveClient = redissonClient.reactive()
+    private val redis: RedissonReactiveClient = Config()
+        .also {
+            it.useSingleServer()
+                .setAddress(redisConfiguration.address)
+                .setPassword(redisConfiguration.password)
+                .setConnectionMinimumIdleSize(redisConfiguration.connectionMinimumIdleSize)
+                .setConnectionPoolSize(redisConfiguration.connectionPoolSize)
+        }
+        .let(Redisson::create)
+        .reactive()
 
     override fun getExchange(base: Coin, quote: Coin, days: List<LocalDate>): Flux<Pair<LocalDate, BigDecimal>> {
         val cache = Flux
