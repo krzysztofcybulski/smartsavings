@@ -5,6 +5,7 @@ import me.kcybulski.smartsavings.domain.ports.CryptoPricesPort
 import org.redisson.Redisson
 import org.redisson.api.RedissonReactiveClient
 import org.redisson.config.Config
+import org.slf4j.LoggerFactory.getLogger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.math.BigDecimal
@@ -30,11 +31,13 @@ class RedisCacheCryptoPrices(
         val cache = Flux
             .fromIterable(days)
             .flatMap { date -> redis.getBucket<BigDecimal>(key(base, quote, date)).get().map { date to it } }
-            .doOnNext { println("Loading from cache ${base.symbol} ${quote.symbol} ${it.first} -> ${it.second}") }
             .cache()
 
-        return cache.collectList()
+        return cache
+            .collectList()
+            .doOnNext { logger.info("Loaded {} entries from cache", it.size) }
             .map { cached -> days - cached.map { it.first } }
+            .doOnNext { logger.info("Fetching {} entries", it.size) }
             .flatMapMany { cryptoPrices.getExchange(base, quote, it) }
             .flatMap { persist(base, quote, it.first, it.second) }
             .concatWith(cache)
@@ -49,8 +52,10 @@ class RedisCacheCryptoPrices(
             .getBucket<BigDecimal>(key(base, quote, day))
             .set(value)
             .thenReturn(day to value)
-            .doOnNext { println("Saving to cache ${base.symbol} ${quote.symbol} $day -> $value") }
 
     private fun key(base: Coin, quote: Coin, day: LocalDate) = "_ex_${base.symbol}_${quote.symbol}_${day}"
 
+    companion object {
+        private val logger = getLogger(RedisCacheCryptoPrices::class.java)
+    }
 }
